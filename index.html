@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Number guessing game</h1>
+
+    <p>
+      We have selected a random number between 1 and 100. See if you can guess
+      it in 10 turns or fewer. We'll tell you if your guess was too high or too
+      low.
+    </p>
+
+    <div>
+      <label for="number">Guess Number</label>
+      <input type="number" name="number" id="number" class="number" />
+
+      <button type="submit" class="guessSubmit">Submit Guess</button>
+    </div>
+
+    <div class="result">
+      <p class="prevGuess"></p>
+      <p class="rightOrWrong"></p>
+      <p class="lowOrHigh"></p>
+    </div>
+
+    <script>
+      let randomNum = Math.floor(Math.random() * 100) + 1;
+      let guessCount = 0;
+
+      const input = document.querySelector(".number");
+      const prevGuess = document.querySelector(".prevGuess");
+      const rightOrWrong = document.querySelector(".rightOrWrong");
+      const lowOrHigh = document.querySelector(".lowOrHigh");
+      const submitButton = document.querySelector(".guessSubmit");
+
+      let resetButton;
+
+      function resetGame() {
+        guessCount = 0;
+        randomNum = Math.floor(Math.random() * 100) + 1;
+        input.disabled = false;
+        submitButton.disabled = false;
+
+        const results = document.querySelectorAll(".result p");
+        for (const result of results) {
+          result.textContent = "";
+        }
+
+        resetButton.parentNode.removeChild(resetButton);
+      }
+
+      function setGameOver() {
+        input.disabled = true;
+        submitButton.disabled = true;
+        resetButton = document.createElement("button");
+        resetButton.textContent = "Start new game";
+        document.body.append(resetButton);
+        resetButton.addEventListener("click", resetGame);
+      }
+
+      function verifyAnswer() {
+        const userGuess = Number(input.value);
+
+        console.log(randomNum);
+
+        if (guessCount === 0) {
+          prevGuess.textContent = "Your previous guess";
+        }
+
+        prevGuess.textContent = `${prevGuess.textContent} ${userGuess}`;
+
+        if (userGuess === randomNum) {
+          rightOrWrong.textContent = "You win";
+          lowOrHigh.textContent = "";
+          setGameOver();
+          return;
+        }
+        if (guessCount === 10) {
+          rightOrWrong.textContent = "You lose";
+          lowOrHigh.textContent = "";
+          setGameOver();
+          return;
+        }
+        if (userGuess !== randomNum) {
+          rightOrWrong.textContent = "Wrong!";
+          if (userGuess < randomNum) {
+            lowOrHigh.textContent = "Your guess is too low";
+          } else if (userGuess > randomNum) {
+            lowOrHigh.textContent = "Your guess is too high";
+          }
+        }
+        guessCount++;
+        input.value = "";
+        input.focus();
+      }
+
+      submitButton.addEventListener("click", verifyAnswer);
+    </script>
+  </body>
+</html>
